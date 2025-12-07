@@ -1,0 +1,52 @@
+{
+  "name": "CeloAfricaDAO Invoice Management",
+  "short_name": "Celo Invoice",
+  "description": "Blockchain-powered invoice management on the Celo network",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#35D07F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/celo-celo-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/celologo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["finance", "business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Create Invoice",
+      "short_name": "New Invoice",
+      "description": "Create a new invoice",
+      "url": "/invoices/new",
+      "icons": [
+        {
+          "src": "/celo-celo-logo.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/dashboard",
+      "icons": [
+        {
+          "src": "/celo-celo-logo.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

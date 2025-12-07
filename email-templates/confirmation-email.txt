@@ -1,0 +1,60 @@
+CELOAFRICADAO INVOICE MANAGEMENT
+==================================
+
+Welcome to CeloAfricaDAO! 🎉
+
+Hello there! 👋
+
+Thank you for joining CeloAfricaDAO Invoice Management! We're excited to have you as part of our community building the future of blockchain-powered invoicing in Africa.
+
+CONFIRM YOUR EMAIL
+------------------
+
+To get started and access all the amazing features, please confirm your email address by clicking the link below:
+
+{{ .ConfirmationURL }}
+
+WHAT YOU'LL GET
+---------------
+
+⚡ Fast & Secure
+   Create and manage invoices with blockchain security
+
+💰 cUSD Payments
+   Get paid in stable cryptocurrency on the Celo network
+
+🌍 Built for Africa
+   Empowering African businesses with Web3 tools
+
+ONCE CONFIRMED, YOU'LL BE ABLE TO:
+-----------------------------------
+
+✓ Create and manage unlimited invoices
+✓ Track payments in cUSD
+✓ Manage your clients
+✓ Export invoices for payment processing
+✓ Access your personalized dashboard
+
+SECURITY NOTICE
+---------------
+
+🔒 This confirmation link will expire in 24 hours. If you didn't create an account with CeloAfricaDAO Invoice, please ignore this email.
+
+NEED HELP?
+----------
+
+Our support team is here for you. Just reply to this email and we'll get back to you as soon as possible.
+
+Welcome aboard! 🚀
+
+The CeloAfricaDAO Team
+
+----------------------------------
+CeloAfricaDAO Invoice Management
+Powered by Celo Blockchain • Built for Africa
+
+Visit Website: {{ .SiteURL }}
+Support: {{ .SiteURL }}/support
+Privacy Policy: {{ .SiteURL }}/privacy
+
+© 2025 CeloAfricaDAO. All rights reserved.
