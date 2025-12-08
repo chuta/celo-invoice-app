@@ -7,8 +7,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'blockspacetechnologies@gmail.com'
 const APP_URL = Deno.env.get('APP_URL') || 'https://celo-invoice.netlify.app/'
+
+// Support multiple admin emails (comma-separated)
+const ADMIN_EMAILS_RAW = Deno.env.get('ADMIN_EMAILS') || Deno.env.get('ADMIN_EMAIL') || 'blockspacetechnologies@gmail.com'
+const ADMIN_EMAILS = ADMIN_EMAILS_RAW.split(',').map(email => email.trim()).filter(email => email.length > 0)
 
 interface EmailRequest {
   type: 'invoice_pending' | 'invoice_approved' | 'invoice_rejected' | 'invoice_cancelled' | 'invoice_voided' | 'invoice_paid' | 'recurring_generated'
@@ -92,14 +95,14 @@ serve(async (req) => {
     `
 
     // Prepare email content based on type
-    let to: string
+    let to: string | string[]
     let subject: string
     let html: string
 
     switch (type) {
       case 'invoice_pending':
-        // Email to admin when invoice is submitted
-        to = ADMIN_EMAIL
+        // Email to all admins when invoice is submitted
+        to = ADMIN_EMAILS
         subject = `📋 New Invoice Submitted: ${invoice.invoice_number}`
         html = createEmailHTML(
           '📋 New Invoice Awaiting Approval',
@@ -214,8 +217,8 @@ serve(async (req) => {
         break
 
       case 'invoice_cancelled':
-        // Email to admin when user cancels invoice
-        to = ADMIN_EMAIL
+        // Email to all admins when user cancels invoice
+        to = ADMIN_EMAILS
         subject = `🚫 Invoice Cancelled: ${invoice.invoice_number}`
         html = createEmailHTML(
           '🚫 Invoice Cancelled by User',

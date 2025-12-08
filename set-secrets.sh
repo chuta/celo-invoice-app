@@ -27,11 +27,13 @@ if [ -z "$RESEND_API_KEY" ]; then
     exit 1
 fi
 
-# Prompt for Admin Email
+# Prompt for Admin Emails
 echo ""
-echo "👤 Step 2: Admin Email"
-read -p "Enter admin email [admin@celoafricadao.org]: " ADMIN_EMAIL
-ADMIN_EMAIL=${ADMIN_EMAIL:-admin@celoafricadao.org}
+echo "👤 Step 2: Admin Emails"
+echo "You can enter multiple admin emails separated by commas"
+echo "Example: admin1@example.com, admin2@example.com"
+read -p "Enter admin email(s) [blockspacetechnologies@gmail.com]: " ADMIN_EMAILS
+ADMIN_EMAILS=${ADMIN_EMAILS:-blockspacetechnologies@gmail.com}
 
 # Prompt for App URL
 echo ""
@@ -56,7 +58,7 @@ echo ""
 echo "📋 Review Your Settings:"
 echo "========================"
 echo "Resend API Key: ${RESEND_API_KEY:0:10}..."
-echo "Admin Email: $ADMIN_EMAIL"
+echo "Admin Emails: $ADMIN_EMAILS"
 echo "App URL: $APP_URL"
 echo "From Email: $FROM_EMAIL"
 echo ""
@@ -75,7 +77,7 @@ echo ""
 
 supabase secrets set \
   RESEND_API_KEY="$RESEND_API_KEY" \
-  ADMIN_EMAIL="$ADMIN_EMAIL" \
+  ADMIN_EMAILS="$ADMIN_EMAILS" \
   APP_URL="$APP_URL" \
   FROM_EMAIL="$FROM_EMAIL"
 
