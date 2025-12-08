@@ -6,12 +6,13 @@ import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
 
 export default function InvoiceNew() {
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const navigate = useNavigate()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPreview, setShowPreview] = useState(false)
+  const [checkingWallet, setCheckingWallet] = useState(true)
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -29,8 +30,25 @@ export default function InvoiceNew() {
   ])
 
   useEffect(() => {
+    checkWalletAddress()
     fetchClients()
   }, [])
+
+  const checkWalletAddress = async () => {
+    setCheckingWallet(true)
+    // Wait a moment for profile to load if needed
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    if (!profile?.wallet_address) {
+      // Redirect to settings if no wallet address
+      navigate('/settings', { 
+        state: { 
+          message: 'Please configure your cUSD wallet address before creating invoices.' 
+        } 
+      })
+    }
+    setCheckingWallet(false)
+  }
 
   const fetchClients = async () => {
     try {
@@ -135,6 +153,16 @@ export default function InvoiceNew() {
   }
 
   const selectedClient = clients.find((c) => c.id === formData.client_id)
+
+  if (checkingWallet) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>

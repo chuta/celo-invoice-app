@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
 
 export default function Invoices() {
+  const { profile } = useAuth()
+  const navigate = useNavigate()
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
@@ -12,6 +15,7 @@ export default function Invoices() {
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [showWalletWarning, setShowWalletWarning] = useState(false)
 
   useEffect(() => {
     fetchInvoices()
@@ -147,6 +151,14 @@ export default function Invoices() {
     }
   }
 
+  const handleCreateInvoiceClick = (e) => {
+    if (!profile?.wallet_address) {
+      e.preventDefault()
+      setShowWalletWarning(true)
+      setTimeout(() => setShowWalletWarning(false), 5000)
+    }
+  }
+
   const filteredInvoices = invoices.filter((invoice) => {
     const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter
     const matchesSearch =
@@ -174,11 +186,43 @@ export default function Invoices() {
                 {exporting ? 'Exporting...' : `📥 Export Selected (${selectedInvoices.length})`}
               </button>
             )}
-            <Link to="/invoices/new" className="btn-primary">
-              + Create Invoice
-            </Link>
+            {profile?.wallet_address ? (
+              <Link to="/invoices/new" className="btn-primary">
+                + Create Invoice
+              </Link>
+            ) : (
+              <button
+                onClick={handleCreateInvoiceClick}
+                className="btn-primary"
+              >
+                + Create Invoice
+              </button>
+            )}
           </div>
         </div>
+
+        {/* Wallet Warning */}
+        {showWalletWarning && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">⚠️</span>
+              <div className="flex-1">
+                <h3 className="text-yellow-900 font-semibold mb-1">
+                  Wallet Address Required
+                </h3>
+                <p className="text-yellow-800 text-sm mb-3">
+                  You need to configure your cUSD wallet address before creating invoices. This ensures you can receive payments.
+                </p>
+                <Link
+                  to="/settings"
+                  className="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  Go to Settings →
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         {success && (

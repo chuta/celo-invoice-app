@@ -1,15 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
 
 export default function Settings() {
   const { profile, updateProfile } = useAuth()
+  const location = useLocation()
   const [fullName, setFullName] = useState(profile?.full_name || '')
   const [walletAddress, setWalletAddress] = useState(profile?.wallet_address || '')
   const [isCkashWallet, setIsCkashWallet] = useState(profile?.is_ckash_wallet || false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+  const [redirectMessage, setRedirectMessage] = useState('')
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setRedirectMessage(location.state.message)
+      // Clear the message after 10 seconds
+      setTimeout(() => setRedirectMessage(''), 10000)
+    }
+  }, [location])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,6 +47,22 @@ export default function Settings() {
     <Layout>
       <div className="max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+
+        {redirectMessage && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start">
+              <span className="text-2xl mr-3">⚠️</span>
+              <div className="flex-1">
+                <h3 className="text-yellow-900 font-semibold mb-1">
+                  Action Required
+                </h3>
+                <p className="text-yellow-800 text-sm">
+                  {redirectMessage}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {success && (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
@@ -83,7 +110,7 @@ export default function Settings() {
 
             <div>
               <label htmlFor="walletAddress" className="block text-sm font-medium text-gray-700 mb-1">
-                cUSD Wallet Address
+                cUSD Wallet Address *
               </label>
               <input
                 id="walletAddress"
@@ -94,7 +121,7 @@ export default function Settings() {
                 placeholder="0x..."
               />
               <p className="text-xs text-gray-500 mt-1">
-                This is where you'll receive invoice payments
+                <strong>Required:</strong> This is where you'll receive invoice payments. You must configure this before creating invoices.
               </p>
               
               {/* cKASH Wallet Checkbox */}
