@@ -12,6 +12,15 @@ export default function Clients() {
   const [searchTerm, setSearchTerm] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isCeloAfricaDAO, setIsCeloAfricaDAO] = useState(false)
+
+  // CeloAfricaDAO default information
+  const CELO_AFRICA_DAO_INFO = {
+    name: 'Celo Africa DAO',
+    email: 'team@celoafricadao.xyz',
+    phone: '',
+    address: 'P.O. Box 30772-00100\nNairobi, Kenya',
+  }
 
   // Form state
   const [formData, setFormData] = useState({
@@ -102,6 +111,7 @@ export default function Clients() {
   const openModal = () => {
     setEditingClient(null)
     setFormData({ name: '', email: '', phone: '', address: '' })
+    setIsCeloAfricaDAO(false)
     setShowModal(true)
     setError('')
     setSuccess('')
@@ -111,6 +121,16 @@ export default function Clients() {
     setShowModal(false)
     setEditingClient(null)
     setFormData({ name: '', email: '', phone: '', address: '' })
+    setIsCeloAfricaDAO(false)
+  }
+
+  const handleCeloAfricaDAOToggle = (checked) => {
+    setIsCeloAfricaDAO(checked)
+    if (checked) {
+      setFormData(CELO_AFRICA_DAO_INFO)
+    } else {
+      setFormData({ name: '', email: '', phone: '', address: '' })
+    }
   }
 
   const filteredClients = clients.filter((client) =>
@@ -223,6 +243,28 @@ export default function Clients() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* CeloAfricaDAO Quick Fill */}
+              {!editingClient && (
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                  <label className="flex items-start cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isCeloAfricaDAO}
+                      onChange={(e) => handleCeloAfricaDAOToggle(e.target.checked)}
+                      className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    />
+                    <div className="ml-3">
+                      <span className="text-sm font-medium text-gray-900">
+                        I'm a CeloAfricaDAO member
+                      </span>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Check this to autofill CeloAfricaDAO organization details
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Name *
@@ -234,6 +276,7 @@ export default function Clients() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="input-field"
                   placeholder="Client name"
+                  disabled={isCeloAfricaDAO}
                 />
               </div>
 
@@ -248,6 +291,7 @@ export default function Clients() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="input-field"
                   placeholder="client@example.com"
+                  disabled={isCeloAfricaDAO}
                 />
               </div>
 
@@ -261,6 +305,7 @@ export default function Clients() {
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="input-field"
                   placeholder="+1234567890"
+                  disabled={isCeloAfricaDAO}
                 />
               </div>
 
@@ -274,6 +319,7 @@ export default function Clients() {
                   className="input-field"
                   rows="3"
                   placeholder="Client address"
+                  disabled={isCeloAfricaDAO}
                 />
               </div>
 
