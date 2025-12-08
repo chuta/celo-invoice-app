@@ -7,8 +7,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'admin@celoafricadao.org'
-const APP_URL = Deno.env.get('APP_URL') || 'https://your-app-url.com'
+const ADMIN_EMAIL = Deno.env.get('ADMIN_EMAIL') || 'blockspacetechnologies@gmail.com'
+const APP_URL = Deno.env.get('APP_URL') || 'https://celo-invoice.netlify.app/'
 
 interface EmailRequest {
   type: 'invoice_pending' | 'invoice_approved' | 'invoice_rejected' | 'invoice_cancelled' | 'invoice_voided' | 'invoice_paid' | 'recurring_generated'
@@ -260,7 +260,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: Deno.env.get('FROM_EMAIL') || 'CeloAfricaDAO Invoice <onboarding@resend.dev>',
+        from: Deno.env.get('FROM_EMAIL') || 'CeloAfricaDAO Invoice <hello@heirvault.pro>',
         to,
         subject,
         html,
