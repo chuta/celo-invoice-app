@@ -285,53 +285,72 @@ export default function InvoiceNew() {
             {/* Line Items */}
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Line Items</h2>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {lineItems.map((item, index) => (
-                  <div key={index} className="flex gap-3 items-start">
-                    <div className="flex-1">
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                    {/* Description - Full Width */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Description *
+                      </label>
                       <input
                         type="text"
-                        placeholder="Description"
+                        placeholder="Item description"
                         value={item.description}
                         onChange={(e) => updateLineItem(index, 'description', e.target.value)}
                         className="input-field"
                         required
                       />
                     </div>
-                    <div className="w-24">
-                      <input
-                        type="number"
-                        placeholder="Qty"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => updateLineItem(index, 'quantity', e.target.value)}
-                        className="input-field"
-                        required
-                      />
+
+                    {/* Quantity and Price - Side by Side on Mobile */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Quantity *
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="Qty"
+                          min="1"
+                          value={item.quantity}
+                          onChange={(e) => updateLineItem(index, 'quantity', e.target.value)}
+                          className="input-field"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Price (cUSD) *
+                        </label>
+                        <input
+                          type="number"
+                          placeholder="0.00"
+                          min="0"
+                          step="0.01"
+                          value={item.unit_price}
+                          onChange={(e) => updateLineItem(index, 'unit_price', e.target.value)}
+                          className="input-field"
+                          required
+                        />
+                      </div>
                     </div>
-                    <div className="w-32">
-                      <input
-                        type="number"
-                        placeholder="Price"
-                        min="0"
-                        step="0.01"
-                        value={item.unit_price}
-                        onChange={(e) => updateLineItem(index, 'unit_price', e.target.value)}
-                        className="input-field"
-                        required
-                      />
-                    </div>
-                    <div className="w-32 flex items-center justify-between">
-                      <span className="text-gray-900 font-medium">
-                        {(item.quantity * item.unit_price).toFixed(2)}
-                      </span>
+
+                    {/* Total and Delete Button */}
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                      <div>
+                        <span className="text-xs text-gray-600">Total: </span>
+                        <span className="text-base font-semibold text-gray-900">
+                          {(item.quantity * item.unit_price).toFixed(2)} cUSD
+                        </span>
+                      </div>
                       {lineItems.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeLineItem(index)}
-                          className="text-red-600 hover:text-red-700 ml-2"
+                          className="text-red-600 hover:text-red-700 text-sm font-medium"
                         >
-                          ✕
+                          Remove
                         </button>
                       )}
                     </div>
