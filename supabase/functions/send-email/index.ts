@@ -49,6 +49,9 @@ serve(async (req) => {
 
     if (invoiceError) throw invoiceError
 
+    // CeloAfricaDAO Logo from IPFS
+    const LOGO_URL = 'https://scarlet-basic-wolf-474.mypinata.cloud/ipfs/bafkreid6hqmetzb4khpt33fzofgwgigpa4sykzvdsdz74xm2n4rpmuptxq'
+
     // Helper function to create email HTML with Celo branding
     const createEmailHTML = (title: string, content: string, ctaText?: string, ctaUrl?: string) => `
       <!DOCTYPE html>
@@ -60,7 +63,8 @@ serve(async (req) => {
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f9fafb; margin: 0; padding: 20px; }
           .container { max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #FCFF52 0%, #FBCC5C 50%, #35D07F 100%); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
           .header { background: rgba(255,255,255,0.95); padding: 30px; text-align: center; border-bottom: 3px solid #35D07F; }
-          .header h1 { font-size: 24px; font-weight: 700; color: #111827; margin: 0; }
+          .logo { max-width: 200px; height: auto; margin-bottom: 15px; }
+          .header h1 { font-size: 24px; font-weight: 700; color: #111827; margin: 10px 0 0 0; }
           .content { background: #ffffff; padding: 30px; }
           .title { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 20px; }
           .message { font-size: 16px; color: #4b5563; margin-bottom: 20px; }
@@ -78,7 +82,8 @@ serve(async (req) => {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🌍 CeloAfricaDAO Invoice</h1>
+            <img src="${LOGO_URL}" alt="CeloAfricaDAO Logo" class="logo" />
+            <h1>CeloAfricaDAO Invoice</h1>
           </div>
           <div class="content">
             <div class="title">${title}</div>
