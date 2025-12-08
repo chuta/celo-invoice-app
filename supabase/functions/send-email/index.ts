@@ -16,9 +16,19 @@ interface EmailRequest {
   notes?: string
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   try {
-    const { type, invoiceId }: EmailRequest = await req.json()
+    const { type, invoiceId, notes }: EmailRequest & { notes?: string } = await req.json()
 
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!)
@@ -85,7 +95,6 @@ serve(async (req) => {
     let to: string
     let subject: string
     let html: string
-    const { notes } = await req.json()
 
     switch (type) {
       case 'invoice_pending':
@@ -275,12 +284,13 @@ serve(async (req) => {
     const data = await response.json()
 
     return new Response(JSON.stringify({ success: true, data }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error) {
+    console.error('Email function error:', error)
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })
   }
