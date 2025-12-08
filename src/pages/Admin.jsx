@@ -84,8 +84,8 @@ export default function Admin() {
 
       if (error) throw error
       
-      // Send email notification
-      await sendEmailNotification('invoice_approved', invoiceId)
+      // Send email notification with notes
+      await sendEmailNotification('invoice_approved', invoiceId, notes)
       
       setSuccess('Invoice approved successfully')
       setSelectedInvoices([])
@@ -97,7 +97,7 @@ export default function Admin() {
 
   const handleReject = async (invoiceId, notes = '') => {
     try {
-      const { error } = await supabase
+      const { error} = await supabase
         .from('invoices')
         .update({ 
           status: 'rejected',
@@ -107,8 +107,8 @@ export default function Admin() {
 
       if (error) throw error
       
-      // Send email notification
-      await sendEmailNotification('invoice_rejected', invoiceId)
+      // Send email notification with notes
+      await sendEmailNotification('invoice_rejected', invoiceId, notes)
       
       setSuccess('Invoice rejected')
       setSelectedInvoices([])
@@ -129,6 +129,10 @@ export default function Admin() {
         .eq('id', invoiceId)
 
       if (error) throw error
+      
+      // Send email notification with notes
+      await sendEmailNotification('invoice_voided', invoiceId, notes)
+      
       setSuccess('Invoice voided')
       setSelectedInvoices([])
       fetchAdminData()
@@ -148,6 +152,10 @@ export default function Admin() {
         .eq('id', invoiceId)
 
       if (error) throw error
+      
+      // Send email notification
+      await sendEmailNotification('invoice_paid', invoiceId)
+      
       setSuccess('Invoice marked as paid')
       setSelectedInvoices([])
       fetchAdminData()

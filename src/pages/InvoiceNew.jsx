@@ -123,7 +123,7 @@ export default function InvoiceNew() {
 
       // Send email notification if submitted for approval
       if (status === 'pending') {
-        await sendEmailNotification('invoice_submitted', data.id)
+        await sendEmailNotification('invoice_pending', data.id)
       }
 
       navigate(`/invoices/${data.id}`)
