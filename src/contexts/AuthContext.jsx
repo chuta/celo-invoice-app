@@ -119,6 +119,11 @@ export const AuthProvider = ({ children }) => {
     return data
   }
 
+  const refreshProfile = async () => {
+    if (!user) return
+    await fetchProfile(user.id)
+  }
+
   const value = {
     user,
     profile,
@@ -127,6 +132,7 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     updateProfile,
+    refreshProfile,
     isAdmin: profile?.role === 'admin' || profile?.role === 'super_admin',
     isSuperAdmin: profile?.role === 'super_admin',
   }
