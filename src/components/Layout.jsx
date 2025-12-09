@@ -25,6 +25,7 @@ export default function Layout({ children }) {
     { path: '/dashboard', label: 'Dashboard', icon: '📊', mobileIcon: '🏠' },
     { path: '/invoices', label: 'Invoices', icon: '📄', mobileIcon: '📄' },
     { path: '/clients', label: 'Clients', icon: '👥', mobileIcon: '👥' },
+    { path: '/settings/payment-link', label: 'Payment Link', icon: '🔗', mobileIcon: '🔗' },
     { path: '/settings', label: 'Settings', icon: '⚙️', mobileIcon: '⚙️' },
   ]
 
