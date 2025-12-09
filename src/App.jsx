@@ -11,6 +11,8 @@ import InvoiceNew from './pages/InvoiceNew'
 import InvoiceDetail from './pages/InvoiceDetail'
 import Admin from './pages/Admin'
 import UserManagement from './pages/UserManagement'
+import PaymentLink from './pages/PaymentLink'
+import PaymentLinkSettings from './pages/PaymentLinkSettings'
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/pay/:username" element={<PaymentLink />} />
           
           {/* Protected routes */}
           <Route
@@ -36,6 +39,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Settings />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/settings/payment-link"
+            element={
+              <ProtectedRoute>
+                <PaymentLinkSettings />
               </ProtectedRoute>
             }
           />
