@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { QRCodeSVG } from 'qrcode.react'
 import Layout from '../components/Layout'
+import ProfilePictureUpload from '../components/ProfilePictureUpload'
 
 export default function PaymentLinkSettings() {
   const { user, profile, refreshProfile } = useAuth()
@@ -253,6 +254,19 @@ export default function PaymentLinkSettings() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Information</h2>
               
               <div className="space-y-4">
+                {/* Profile Picture Upload */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Profile Picture
+                  </label>
+                  <ProfilePictureUpload
+                    currentImageUrl={profile?.profile_image_url}
+                    onUploadSuccess={(url) => {
+                      refreshProfile()
+                    }}
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Tagline
