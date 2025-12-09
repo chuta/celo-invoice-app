@@ -164,6 +164,20 @@ export default function PaymentLinkSettings() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Payment Link Settings</h1>
           <p className="text-gray-600 mt-1">Configure your personalized payment link</p>
+          <div className="mt-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-green-800">
+              <span className="font-medium">💡 Pro Tip:</span> Using your{' '}
+              <a 
+                href="https://ckash.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-green-700 hover:text-green-900 font-semibold underline"
+              >
+                cKASH
+              </a>
+              {' '}wallet address for payments helps support helps to grow CeloAfricaDAO transaction volumn on the Celo network 💚
+            </p>
+          </div>
         </div>
 
         {success && (
