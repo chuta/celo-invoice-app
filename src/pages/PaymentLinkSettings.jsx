@@ -175,7 +175,7 @@ export default function PaymentLinkSettings() {
               >
                 cKASH
               </a>
-              {' '}wallet address for payments helps support helps to grow CeloAfricaDAO transaction volumn on the Celo network 💚
+              {' '}wallet address for payments helps support and grow CeloAfricaDAO transaction volumn on the Celo network 💚
             </p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function PaymentLinkSettings() {
           <div className="lg:col-span-2 space-y-6">
             {/* Username */}
             <div className="card">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Your Payment Link</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Setup your Payment Link</h2>
               
               <div className="space-y-4">
                 <div>

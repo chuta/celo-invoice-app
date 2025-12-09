@@ -13,6 +13,7 @@ import Admin from './pages/Admin'
 import UserManagement from './pages/UserManagement'
 import PaymentLink from './pages/PaymentLink'
 import PaymentLinkSettings from './pages/PaymentLinkSettings'
+import PaymentRequests from './pages/PaymentRequests'
 
 function App() {
   return (
@@ -48,6 +49,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <PaymentLinkSettings />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/payment-requests"
+            element={
+              <ProtectedRoute>
+                <PaymentRequests />
               </ProtectedRoute>
             }
           />
