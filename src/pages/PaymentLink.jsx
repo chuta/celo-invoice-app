@@ -21,11 +21,10 @@ export default function PaymentLink() {
   })
 
   useEffect(() => {
-    fetchProfile()
-    trackView()
+    fetchProfileAndTrack()
   }, [username])
 
-  const fetchProfile = async () => {
+  const fetchProfileAndTrack = async () => {
     try {
       setLoading(true)
       
@@ -38,10 +37,14 @@ export default function PaymentLink() {
       
       if (!data) {
         setError('Payment link not found or disabled')
+        setLoading(false)
         return
       }
 
       setProfile(data)
+      
+      // Track view after profile is loaded
+      await trackView(data.id)
     } catch (err) {
       console.error('Error fetching profile:', err)
       setError('Unable to load payment link')
@@ -50,16 +53,26 @@ export default function PaymentLink() {
     }
   }
 
-  const trackView = async () => {
+  const trackView = async (userId) => {
     try {
       // Increment view count
       await supabase.rpc('increment_payment_link_view', { username_param: username })
 
-      // Track analytics
+      // Get client info
+      const userAgent = navigator.userAgent
+      const referrer = document.referrer || null
+
+      // Track analytics with proper user_id
       await supabase.from('payment_link_analytics').insert({
-        user_id: profile?.id,
+        user_id: userId,
         event_type: 'view',
-        event_data: { username, page: 'payment_link' },
+        event_data: { 
+          username, 
+          page: 'payment_link',
+          timestamp: new Date().toISOString()
+        },
+        user_agent: userAgent,
+        referrer: referrer,
       })
     } catch (err) {
       console.error('Error tracking view:', err)
@@ -98,15 +111,19 @@ export default function PaymentLink() {
 
       if (requestError) throw requestError
 
-      // Track payment event
+      // Track payment event with proper data
       await supabase.from('payment_link_analytics').insert({
         user_id: profile.id,
         event_type: 'payment',
         event_data: { 
           username, 
           amount,
-          payer_email: formData.payer_email 
+          payer_email: formData.payer_email,
+          payer_name: formData.payer_name,
+          timestamp: new Date().toISOString()
         },
+        user_agent: navigator.userAgent,
+        referrer: document.referrer || null,
       })
 
       // Increment payment count
@@ -133,12 +150,22 @@ export default function PaymentLink() {
     const url = `${window.location.origin}/pay/${username}`
     const text = `Pay ${profile?.full_name} via CeloAfricaDAO Invoice`
 
-    // Track share event
-    await supabase.from('payment_link_analytics').insert({
-      user_id: profile?.id,
-      event_type: 'share',
-      event_data: { username, platform },
-    })
+    // Track share event with proper data
+    try {
+      await supabase.from('payment_link_analytics').insert({
+        user_id: profile?.id,
+        event_type: 'share',
+        event_data: { 
+          username, 
+          platform,
+          timestamp: new Date().toISOString()
+        },
+        user_agent: navigator.userAgent,
+        referrer: document.referrer || null,
+      })
+    } catch (err) {
+      console.error('Error tracking share:', err)
+    }
 
     const shareUrls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
