@@ -33,21 +33,26 @@ export default function PaymentLink() {
         .rpc('get_public_profile', { username_param: username })
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('RPC Error:', error)
+        throw error
+      }
       
       if (!data) {
-        setError('Payment link not found or disabled')
+        console.log('No profile data returned for username:', username)
+        setError('Payment link not found or disabled. The user may not have enabled their public profile.')
         setLoading(false)
         return
       }
 
+      console.log('Profile loaded successfully:', data)
       setProfile(data)
       
       // Track view after profile is loaded
       await trackView(data.id)
     } catch (err) {
       console.error('Error fetching profile:', err)
-      setError('Unable to load payment link')
+      setError(`Unable to load payment link: ${err.message}`)
     } finally {
       setLoading(false)
     }
