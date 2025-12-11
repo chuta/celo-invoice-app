@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { sendEmailNotification } from '../lib/email'
 import Layout from '../components/Layout'
+import ReportsSection from '../components/ReportsSection'
 
 export default function Admin() {
   const [stats, setStats] = useState({
@@ -142,7 +143,16 @@ export default function Admin() {
   }
 
   const handleMarkAsPaid = async (invoiceId) => {
+    console.log('🔄 handleMarkAsPaid called with invoiceId:', invoiceId)
+    
+    // Add confirmation dialog
+    if (!confirm('Mark this invoice as paid?')) {
+      console.log('❌ User cancelled mark as paid action')
+      return
+    }
+    
     try {
+      console.log('📝 Updating invoice status to paid...')
       const { error } = await supabase
         .from('invoices')
         .update({ 
@@ -151,15 +161,36 @@ export default function Admin() {
         })
         .eq('id', invoiceId)
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Database update failed:', error)
+        throw error
+      }
       
-      // Send email notification
-      await sendEmailNotification('invoice_paid', invoiceId)
+      console.log('✅ Database update successful')
       
-      setSuccess('Invoice marked as paid')
+      // Send email notification with better error handling
+      console.log('📧 About to send invoice_paid email notification for invoice:', invoiceId)
+      console.log('📧 Calling sendEmailNotification function...')
+      
+      const emailResult = await sendEmailNotification('invoice_paid', invoiceId)
+      
+      console.log('📧 Email function returned. Result:', emailResult)
+      console.log('📧 Email result success:', emailResult?.success)
+      console.log('📧 Email result data:', emailResult?.data)
+      console.log('📧 Email result error:', emailResult?.error)
+      
+      if (emailResult.success) {
+        console.log('✅ Email notification sent successfully:', emailResult.data)
+        setSuccess('Invoice marked as paid and notification sent')
+      } else {
+        console.error('❌ Email notification failed:', emailResult.error)
+        setSuccess(`Invoice marked as paid (email notification failed: ${emailResult.error})`)
+      }
+      
       setSelectedInvoices([])
       fetchAdminData()
     } catch (err) {
+      console.error('❌ Error in handleMarkAsPaid:', err)
       setError(err.message)
     }
   }
@@ -423,6 +454,13 @@ export default function Admin() {
             </div>
           </div>
         </div>
+
+        {/* Reports Section */}
+        <ReportsSection 
+          allInvoices={allInvoices}
+          loading={loading}
+          onRefresh={fetchAdminData}
+        />
 
         {/* Pending Invoices - Quick Actions */}
         {pendingInvoices.length > 0 && (

@@ -120,16 +120,39 @@ export default function InvoiceDetail() {
     if (!confirm('Are you sure you want to void this invoice? This action cannot be undone.')) return
 
     try {
+      console.log('🔄 handleVoid called for invoice:', id)
+      
+      // Update invoice status in database
+      console.log('📝 Updating invoice status to voided...')
       const { error } = await supabase
         .from('invoices')
         .update({ status: 'voided' })
         .eq('id', id)
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Database update failed:', error)
+        throw error
+      }
       
-      setSuccess('Invoice voided successfully')
+      console.log('✅ Database update successful')
+      
+      // Send email notification
+      console.log('📧 Sending invoice_voided email notification...')
+      const emailResult = await sendEmailNotification('invoice_voided', id)
+      
+      console.log('📧 Email result:', emailResult)
+      
+      if (emailResult.success) {
+        console.log('✅ Email notification sent successfully')
+        setSuccess('Invoice voided and notification sent')
+      } else {
+        console.error('❌ Email notification failed:', emailResult.error)
+        setSuccess(`Invoice voided (email notification failed: ${emailResult.error})`)
+      }
+      
       fetchInvoice()
     } catch (err) {
+      console.error('❌ Error in handleVoid:', err)
       setError(err.message)
     }
   }
@@ -138,6 +161,10 @@ export default function InvoiceDetail() {
     if (!confirm('Mark this invoice as paid?')) return
 
     try {
+      console.log('🔄 handleMarkPaid called for invoice:', id)
+      
+      // Update invoice status in database
+      console.log('📝 Updating invoice status to paid...')
       const { error } = await supabase
         .from('invoices')
         .update({ 
@@ -146,11 +173,30 @@ export default function InvoiceDetail() {
         })
         .eq('id', id)
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Database update failed:', error)
+        throw error
+      }
       
-      setSuccess('Invoice marked as paid')
+      console.log('✅ Database update successful')
+      
+      // Send email notification
+      console.log('📧 Sending invoice_paid email notification...')
+      const emailResult = await sendEmailNotification('invoice_paid', id)
+      
+      console.log('📧 Email result:', emailResult)
+      
+      if (emailResult.success) {
+        console.log('✅ Email notification sent successfully')
+        setSuccess('Invoice marked as paid and notification sent')
+      } else {
+        console.error('❌ Email notification failed:', emailResult.error)
+        setSuccess(`Invoice marked as paid (email notification failed: ${emailResult.error})`)
+      }
+      
       fetchInvoice()
     } catch (err) {
+      console.error('❌ Error in handleMarkPaid:', err)
       setError(err.message)
     }
   }

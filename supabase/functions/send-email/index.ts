@@ -31,13 +31,27 @@ serve(async (req) => {
   }
 
   try {
-    const { type, invoiceId, notes }: EmailRequest & { notes?: string } = await req.json()
+    console.log('📧 Email function called with method:', req.method)
+    console.log('📧 Function start timestamp:', new Date().toISOString())
+    
+    const requestBody = await req.json()
+    console.log('📧 Request body:', requestBody)
+    
+    const { type, invoiceId, notes }: EmailRequest & { notes?: string } = requestBody
+
+    // Validate required parameters
+    if (!type || !invoiceId) {
+      throw new Error('Missing required parameters: type and invoiceId')
+    }
+
+    console.log(`📧 Processing email: ${type} for invoice ${invoiceId}`)
 
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!)
 
-    // Fetch invoice details
-    const { data: invoice, error: invoiceError } = await supabase
+    // Fetch invoice details with better error handling
+    console.log('📧 Fetching invoice details...')
+    const { data: invoices, error: invoiceError } = await supabase
       .from('invoices')
       .select(`
         *,
@@ -45,9 +59,29 @@ serve(async (req) => {
         profiles (full_name, email, wallet_address)
       `)
       .eq('id', invoiceId)
-      .single()
 
-    if (invoiceError) throw invoiceError
+    if (invoiceError) {
+      console.error('❌ Invoice fetch error:', invoiceError)
+      throw new Error(`Failed to fetch invoice: ${invoiceError.message}`)
+    }
+
+    if (!invoices || invoices.length === 0) {
+      console.error('❌ Invoice not found:', invoiceId)
+      throw new Error(`Invoice not found: ${invoiceId}`)
+    }
+
+    const invoice = invoices[0]
+
+    console.log('✅ Invoice fetched:', {
+      id: invoice.id,
+      number: invoice.invoice_number,
+      status: invoice.status,
+      user: invoice.profiles?.full_name,
+      userEmail: invoice.profiles?.email,
+      walletAddress: invoice.profiles?.wallet_address,
+      paidDate: invoice.paid_date,
+      clientName: invoice.clients?.name
+    })
 
     // CeloAfricaDAO Logo from IPFS
     const LOGO_URL = 'https://scarlet-basic-wolf-474.mypinata.cloud/ipfs/bafkreid6hqmetzb4khpt33fzofgwgigpa4sykzvdsdz74xm2n4rpmuptxq'
@@ -104,6 +138,8 @@ serve(async (req) => {
     let subject: string
     let html: string
 
+    console.log(`📧 Processing email type: ${type}`)
+    
     switch (type) {
       case 'invoice_pending':
         // Email to all admins when invoice is submitted
@@ -155,26 +191,30 @@ serve(async (req) => {
 
       case 'invoice_paid':
         // Email to user when payment is completed
+        console.log('📧 Processing invoice_paid case...')
+        console.log('� Imnvoice profiles:', invoice.profiles)
+        console.log('📧 Invoice clients:', invoice.clients)
+        
         to = invoice.profiles.email
         subject = `💰 Payment Completed: ${invoice.invoice_number}`
+        
+        // Simplified template to avoid potential issues
         html = createEmailHTML(
           '💰 Payment Completed Successfully!',
           `
-            <div class="message">Hi ${invoice.profiles.full_name},</div>
-            <div class="message">Excellent news! Your invoice payment has been completed.</div>
+            <div class="message">Hi ${invoice.profiles?.full_name || 'User'},</div>
+            <div class="message">Your invoice payment has been completed.</div>
             <div class="details">
-              <div class="detail-row"><span class="detail-label">Invoice #:</span><span class="detail-value">${invoice.invoice_number}</span></div>
-              <div class="detail-row"><span class="detail-label">Client:</span><span class="detail-value">${invoice.clients?.name || 'N/A'}</span></div>
-              <div class="detail-row"><span class="detail-label">Amount Paid:</span><span class="detail-value">${invoice.amount} cUSD</span></div>
-              <div class="detail-row"><span class="detail-label">Payment Address:</span><span class="detail-value">${invoice.profiles.wallet_address}</span></div>
-              <div class="detail-row"><span class="detail-label">Payment Date:</span><span class="detail-value">${new Date(invoice.paid_date || Date.now()).toLocaleDateString()}</span></div>
+              <div class="detail-row"><span class="detail-label">Invoice #:</span><span class="detail-value">${invoice.invoice_number || 'N/A'}</span></div>
+              <div class="detail-row"><span class="detail-label">Amount:</span><span class="detail-value">${invoice.amount || '0'} cUSD</span></div>
             </div>
-            <div class="message">The payment has been sent to your wallet address. Please allow a few minutes for the transaction to be confirmed on the Celo blockchain.</div>
-            <div class="message">Thank you for using CeloAfricaDAO Invoice Management! 💚</div>
+            <div class="message">Thank you for using CeloAfricaDAO Invoice Management!</div>
           `,
           '📄 View Invoice',
           `${APP_URL}/invoices/${invoice.id}`
         )
+        
+        console.log('📧 invoice_paid template created successfully')
         break
 
       case 'invoice_rejected':
@@ -269,35 +309,69 @@ serve(async (req) => {
         throw new Error('Invalid email type')
     }
 
+    console.log('📧 Sending email via Resend...', {
+      type,
+      to: Array.isArray(to) ? to : [to],
+      subject
+    })
+
+    // Validate email configuration
+    if (!RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY environment variable is not set')
+    }
+
     // Send email via Resend
+    const emailPayload = {
+      from: Deno.env.get('FROM_EMAIL') || 'CeloAfricaDAO Invoice <hello@heirvault.pro>',
+      to,
+      subject,
+      html,
+    }
+
+    console.log('📧 Email payload:', {
+      from: emailPayload.from,
+      to: emailPayload.to,
+      subject: emailPayload.subject
+    })
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
-      body: JSON.stringify({
-        from: Deno.env.get('FROM_EMAIL') || 'CeloAfricaDAO Invoice <hello@heirvault.pro>',
-        to,
-        subject,
-        html,
-      }),
+      body: JSON.stringify(emailPayload),
     })
 
+    console.log('📧 Resend API response status:', response.status)
+
     if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Resend API error: ${error}`)
+      const errorText = await response.text()
+      console.error('❌ Resend API error:', errorText)
+      throw new Error(`Resend API error (${response.status}): ${errorText}`)
     }
 
     const data = await response.json()
+    console.log('✅ Email sent successfully:', data)
+    console.log('📧 Function success timestamp:', new Date().toISOString())
 
     return new Response(JSON.stringify({ success: true, data }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error) {
-    console.error('Email function error:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('❌ Email function error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      timestamp: new Date().toISOString()
+    })
+    
+    return new Response(JSON.stringify({ 
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })
