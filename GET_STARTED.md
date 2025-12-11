@@ -41,8 +41,11 @@ npm install
 cp .env.example .env
 
 # Edit .env and add your Supabase credentials
-# VITE_SUPABASE_URL=your_project_url
-# VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_SUPABASE_PROJECT_ID=pijcliprhnxulqctfeik
+VITE_SUPABASE_URL=https://pijcliprhnxulqctfeik.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpamNsaXByaG54dWxxY3RmZWlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwOTgxMjMsImV4cCI6MjA4MDY3NDEyM30.9jz2COrneWyw-0Q0kbGowDl8kENcbIhtE_iKSUYKE1Y
+
+VITE_SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpamNsaXByaG54dWxxY3RmZWlrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTA5ODEyMywiZXhwIjoyMDgwNjc0MTIzfQ.Et2zNRikItqlAVchYXHTMkmkjPhe0HjuN4Fs3Q0gYGA
 ```
 
 ### Step 4: Start the App

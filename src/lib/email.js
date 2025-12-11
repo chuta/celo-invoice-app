@@ -8,14 +8,36 @@ import { supabase } from './supabase'
  */
 export async function sendEmailNotification(type, invoiceId, notes = '') {
   try {
+    console.log(`📧 Sending email notification: ${type} for invoice ${invoiceId}`)
+    
+    // Validate inputs
+    if (!type || !invoiceId) {
+      throw new Error('Email type and invoice ID are required')
+    }
+
+    if (!Object.values(EMAIL_TYPES).includes(type)) {
+      throw new Error(`Invalid email type: ${type}`)
+    }
+
     const { data, error } = await supabase.functions.invoke('send-email', {
       body: { type, invoiceId, notes },
     })
 
-    if (error) throw error
+    if (error) {
+      console.error('Supabase function error:', error)
+      throw error
+    }
+
+    console.log('✅ Email notification sent successfully:', data)
     return { success: true, data }
   } catch (error) {
-    console.error('Email notification error:', error)
+    console.error('❌ Email notification error:', {
+      type,
+      invoiceId,
+      notes,
+      error: error.message,
+      stack: error.stack
+    })
     // Don't throw - email failures shouldn't block the main operation
     return { success: false, error: error.message }
   }

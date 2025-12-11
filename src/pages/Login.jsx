@@ -181,7 +181,7 @@ export default function Login() {
 
           <div className="pt-6 border-t border-gray-200">
             <p className="text-center text-xs text-gray-500">
-              Powered by Celo blockchain • Built for AfricaDAO
+              Powered by Celo blockchain • Built by CeloAfricaDAO
             </p>
           </div>
         </div>

@@ -32,7 +32,7 @@ Your code has been successfully committed to your local Git repository with the 
    cd celo-invoice-app
    
    # Add your GitHub repository as remote
-   git remote add origin https://github.com/YOUR_USERNAME/celo-invoice-app.git
+   git remote add origin https://github.com/chuta/celo-invoice-app.git
    
    # Push to GitHub
    git push -u origin main
