@@ -14,8 +14,16 @@ export default function CeloPriceWidget() {
 
   const fetchCeloPrice = async () => {
     try {
+      // Use Supabase Edge Function to avoid CORS issues
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
       const response = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=celo&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true'
+        `${supabaseUrl}/functions/v1/get-celo-price`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
       )
       
       if (!response.ok) throw new Error('Failed to fetch price')
