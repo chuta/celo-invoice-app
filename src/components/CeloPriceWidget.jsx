@@ -58,8 +58,12 @@ export default function CeloPriceWidget() {
     return (
       <div className="card p-4 sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-full flex items-center justify-center animate-pulse">
-            <span className="text-xl sm:text-2xl">🪙</span>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-full flex items-center justify-center animate-pulse p-2">
+            <img 
+              src="/celo-celo-logo.svg" 
+              alt="CELO" 
+              className="w-full h-full"
+            />
           </div>
           <div className="flex-1">
             <div className="h-4 bg-gray-200 rounded w-20 mb-2 animate-pulse"></div>
@@ -74,8 +78,12 @@ export default function CeloPriceWidget() {
     return (
       <div className="card p-4 sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
-            <span className="text-xl sm:text-2xl">🪙</span>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center p-2">
+            <img 
+              src="/celo-celo-logo.svg" 
+              alt="CELO" 
+              className="w-full h-full"
+            />
           </div>
           <div className="flex-1">
             <p className="text-xs sm:text-sm text-gray-600">CELO Price</p>
@@ -92,8 +100,12 @@ export default function CeloPriceWidget() {
     <div className="card p-4 sm:p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 flex-1">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <span className="text-xl sm:text-2xl">🪙</span>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0 p-2">
+            <img 
+              src="/celo-celo-logo.svg" 
+              alt="CELO" 
+              className="w-full h-full"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs sm:text-sm text-gray-600 mb-1">CELO Price</p>
