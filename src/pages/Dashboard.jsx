@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import Layout from '../components/Layout'
+import CeloPriceWidget from '../components/CeloPriceWidget'
 
 export default function Dashboard() {
   const { profile } = useAuth()
@@ -92,6 +93,9 @@ export default function Dashboard() {
             + Create Invoice
           </Link>
         </div>
+
+        {/* CELO Price Widget */}
+        <CeloPriceWidget />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
