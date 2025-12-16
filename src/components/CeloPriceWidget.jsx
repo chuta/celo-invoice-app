@@ -14,19 +14,19 @@ export default function CeloPriceWidget() {
 
   const fetchCeloPrice = async () => {
     try {
-      // Use Supabase Edge Function to avoid CORS issues
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-      const response = await fetch(
-        `${supabaseUrl}/functions/v1/get-celo-price`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+      // Use Netlify Function to avoid CORS issues
+      // In development, this will be /.netlify/functions/get-celo-price
+      // In production, it will be https://your-domain.netlify.app/.netlify/functions/get-celo-price
+      const response = await fetch('/.netlify/functions/get-celo-price', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       
-      if (!response.ok) throw new Error('Failed to fetch price')
+      if (!response.ok) {
+        throw new Error(`Failed to fetch price: ${response.status}`)
+      }
       
       const data = await response.json()
       

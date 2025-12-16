@@ -22,8 +22,10 @@ supabase link --project-ref pijcliprhnxulqctfeik
 
 ### Step 3: Deploy the Edge Function
 ```bash
-supabase functions deploy get-celo-price
+supabase functions deploy get-celo-price --no-verify-jwt
 ```
+
+**Important:** The `--no-verify-jwt` flag allows the function to be called without authentication since it's just fetching public price data.
 
 ### Step 4: Verify Deployment
 Test the function:
