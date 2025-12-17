@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { sendEmailNotification } from '../lib/email'
 import Layout from '../components/Layout'
 import ReportsSection from '../components/ReportsSection'
+import { getInvoiceCategories, getCategoryLabel, getCategoryColorClasses, getCategoryIcon } from '../utils/categoryUtils'
 
 export default function Admin() {
   const [stats, setStats] = useState({
@@ -359,6 +360,37 @@ export default function Admin() {
       ? allInvoices
       : (allInvoices || []).filter((inv) => inv.status === statusFilter)
 
+  // Calculate category statistics
+  const categoryStats = useMemo(() => {
+    const categories = getInvoiceCategories()
+    const stats = categories.map(category => {
+      const categoryInvoices = allInvoices.filter(inv => inv.invoice_category === category.value)
+      const totalAmount = categoryInvoices.reduce((sum, inv) => sum + parseFloat(inv.amount || 0), 0)
+      const approvedCount = categoryInvoices.filter(inv => inv.status === 'approved' || inv.status === 'paid').length
+      
+      return {
+        ...category,
+        count: categoryInvoices.length,
+        totalAmount,
+        approvedCount
+      }
+    })
+
+    // Add uncategorized invoices
+    const uncategorized = allInvoices.filter(inv => !inv.invoice_category)
+    if (uncategorized.length > 0) {
+      stats.push({
+        value: 'uncategorized',
+        label: 'Uncategorized',
+        count: uncategorized.length,
+        totalAmount: uncategorized.reduce((sum, inv) => sum + parseFloat(inv.amount || 0), 0),
+        approvedCount: uncategorized.filter(inv => inv.status === 'approved' || inv.status === 'paid').length
+      })
+    }
+
+    return stats.filter(stat => stat.count > 0).sort((a, b) => b.totalAmount - a.totalAmount)
+  }, [allInvoices])
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -454,6 +486,74 @@ export default function Admin() {
             </div>
           </div>
         </div>
+
+        {/* Category Analytics */}
+        {!loading && categoryStats.length > 0 && (
+          <div className="card">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Invoice Categories</h2>
+                <p className="text-sm text-gray-600 mt-1">Breakdown by category type</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {categoryStats.map((stat) => (
+                <div key={stat.value} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{getCategoryIcon(stat.value)}</span>
+                      <div>
+                        <h3 className="font-medium text-gray-900">{stat.label}</h3>
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border mt-1 ${
+                            stat.value === 'uncategorized' 
+                              ? 'bg-gray-100 text-gray-800 border-gray-200'
+                              : getCategoryColorClasses(stat.value)
+                          }`}
+                        >
+                          {stat.count} {stat.count === 1 ? 'invoice' : 'invoices'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Total Amount:</span>
+                      <span className="font-semibold text-gray-900">
+                        {stat.totalAmount.toFixed(2)} cUSD
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Approved/Paid:</span>
+                      <span className="text-sm text-green-600 font-medium">
+                        {stat.approvedCount} of {stat.count}
+                      </span>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-100">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-green-500 h-2 rounded-full transition-all"
+                          style={{ width: `${(stat.approvedCount / stat.count) * 100}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1 text-right">
+                        {((stat.approvedCount / stat.count) * 100).toFixed(0)}% approved
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {categoryStats.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No invoices with categories yet
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Reports Section */}
         <ReportsSection 
