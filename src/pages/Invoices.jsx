@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
+import { getInvoiceCategories, getCategoryLabel, getCategoryColorClasses, getCategoryIcon } from '../utils/categoryUtils'
 
 export default function Invoices() {
   const { profile } = useAuth()
@@ -10,12 +11,15 @@ export default function Invoices() {
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedInvoices, setSelectedInvoices] = useState([])
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [showWalletWarning, setShowWalletWarning] = useState(false)
+
+  const invoiceCategories = getInvoiceCategories()
 
   useEffect(() => {
     fetchInvoices()
@@ -161,10 +165,11 @@ export default function Invoices() {
 
   const filteredInvoices = invoices.filter((invoice) => {
     const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter
+    const matchesCategory = categoryFilter === 'all' || invoice.invoice_category === categoryFilter
     const matchesSearch =
       invoice.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invoice.clients?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesStatus && matchesSearch
+    return matchesStatus && matchesCategory && matchesSearch
   })
 
   return (
@@ -238,7 +243,7 @@ export default function Invoices() {
 
         {/* Filters */}
         <div className="card">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <input
                 type="text"
@@ -261,6 +266,20 @@ export default function Invoices() {
                 <option value="paid">Paid</option>
                 <option value="cancelled">Cancelled</option>
                 <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="input-field"
+              >
+                <option value="all">All Categories</option>
+                {invoiceCategories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -335,6 +354,9 @@ export default function Invoices() {
                         Status
                       </th>
                       <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
+                        Category
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
                         Due Date
                       </th>
                       <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
@@ -377,6 +399,20 @@ export default function Invoices() {
                           >
                             {invoice.status}
                           </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          {invoice.invoice_category ? (
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getCategoryColorClasses(
+                                invoice.invoice_category
+                              )}`}
+                            >
+                              <span>{getCategoryIcon(invoice.invoice_category)}</span>
+                              <span>{getCategoryLabel(invoice.invoice_category)}</span>
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-xs">No category</span>
+                          )}
                         </td>
                         <td className="py-3 px-4 text-gray-600">
                           {new Date(invoice.due_date).toLocaleDateString()}

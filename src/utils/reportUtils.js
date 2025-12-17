@@ -131,6 +131,11 @@ export const applyFilters = (invoices, filters) => {
       return false
     }
 
+    // Category filter
+    if (filters.category && filters.category !== 'all' && invoice.invoice_category !== filters.category) {
+      return false
+    }
+
     // Client filter
     if (filters.clientId !== 'all' && invoice.client_id !== filters.clientId) {
       return false

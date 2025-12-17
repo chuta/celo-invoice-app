@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { sendEmailNotification } from '../lib/email'
 import { useAuth } from '../contexts/AuthContext'
 import Layout from '../components/Layout'
+import { getCategoryLabel, getCategoryColorClasses, getCategoryIcon } from '../utils/categoryUtils'
 
 export default function InvoiceDetail() {
   const { id } = useParams()
@@ -255,6 +256,18 @@ export default function InvoiceDetail() {
               ← Back to Invoices
             </Link>
             <h1 className="text-2xl font-bold text-gray-900">Invoice {invoice.invoice_number}</h1>
+            {invoice.invoice_category && (
+              <div className="mt-2">
+                <span
+                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border ${getCategoryColorClasses(
+                    invoice.invoice_category
+                  )}`}
+                >
+                  <span>{getCategoryIcon(invoice.invoice_category)}</span>
+                  <span>{getCategoryLabel(invoice.invoice_category)}</span>
+                </span>
+              </div>
+            )}
           </div>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(invoice.status)}`}>
             {invoice.status}

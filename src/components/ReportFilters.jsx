@@ -9,6 +9,7 @@ import {
   getStatusOptions,
   getPresetOptions
 } from '../utils/reportUtils'
+import { getInvoiceCategories } from '../utils/categoryUtils'
 
 export default function ReportFilters({ filters, onFiltersChange, invoices, className = '' }) {
   const [validationErrors, setValidationErrors] = useState({})
@@ -79,10 +80,18 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
     })
   }
 
+  const handleCategoryChange = (category) => {
+    onFiltersChange({
+      ...filters,
+      category
+    })
+  }
+
   const handleClearFilters = () => {
     onFiltersChange({
       dateRange: { start: null, end: null },
       status: 'all',
+      category: 'all',
       clientId: 'all',
       userId: 'all',
       amountRange: { min: '', max: '' }
@@ -91,6 +100,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
 
   const statusOptions = getStatusOptions()
   const presetOptions = getPresetOptions()
+  const categoryOptions = getInvoiceCategories()
 
   return (
     <div className={`card ${className}`}>
@@ -152,7 +162,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
         </div>
 
         {/* Filters Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -164,6 +174,25 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               className="input-field text-sm"
             >
               {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Category Filter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <select
+              value={filters.category || 'all'}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="input-field text-sm"
+            >
+              <option value="all">All Categories</option>
+              {categoryOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -250,7 +279,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
 
       {/* Active Filters Summary */}
       {(filters.dateRange.start || filters.dateRange.end || filters.status !== 'all' || 
-        filters.clientId !== 'all' || filters.userId !== 'all' || 
+        filters.category !== 'all' || filters.clientId !== 'all' || filters.userId !== 'all' || 
         filters.amountRange.min || filters.amountRange.max) && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <p className="text-xs text-gray-600 mb-2">Active Filters:</p>
@@ -268,6 +297,11 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
             {filters.status !== 'all' && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
                 Status: {filters.status}
+              </span>
+            )}
+            {filters.category && filters.category !== 'all' && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
+                Category: {categoryOptions.find(c => c.value === filters.category)?.label || 'Unknown'}
               </span>
             )}
             {filters.clientId !== 'all' && (

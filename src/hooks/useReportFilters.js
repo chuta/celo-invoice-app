@@ -10,6 +10,7 @@ export function useReportFilters(invoices = []) {
   const [filters, setFilters] = useState({
     dateRange: { start: null, end: null },
     status: 'all',
+    category: 'all',
     clientId: 'all',
     userId: 'all',
     amountRange: { min: '', max: '' }
@@ -36,6 +37,7 @@ export function useReportFilters(invoices = []) {
     setFilters({
       dateRange: { start: null, end: null },
       status: 'all',
+      category: 'all',
       clientId: 'all',
       userId: 'all',
       amountRange: { min: '', max: '' }
@@ -48,6 +50,7 @@ export function useReportFilters(invoices = []) {
       filters.dateRange.start !== null ||
       filters.dateRange.end !== null ||
       filters.status !== 'all' ||
+      filters.category !== 'all' ||
       filters.clientId !== 'all' ||
       filters.userId !== 'all' ||
       filters.amountRange.min !== '' ||
