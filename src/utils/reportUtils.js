@@ -234,7 +234,8 @@ export const getPresetOptions = () => {
  * @returns {Object} Statistics object with calculated metrics
  */
 export const calculateReportStatistics = (invoices) => {
-  if (!invoices || invoices.length === 0) {
+  // Ensure invoices is an array
+  if (!invoices || !Array.isArray(invoices) || invoices.length === 0) {
     return {
       totalInvoices: 0,
       totalRevenue: 0,
@@ -314,9 +315,9 @@ export const calculateReportStatistics = (invoices) => {
     totalInvoices,
     totalRevenue,
     averageAmount,
-    statusDistribution,
-    topClients,
-    monthlyTrends
+    statusDistribution: statusDistribution || {},
+    topClients: topClients || [],
+    monthlyTrends: monthlyTrends || []
   }
 }
 

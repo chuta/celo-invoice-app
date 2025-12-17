@@ -4,6 +4,8 @@
 
 Fixed the persistent `Uncaught TypeError: r.filter is not a function` error in the Admin Dashboard Report Filters section.
 
+**Final Solution**: Mirrored the working category filter pattern by creating a dedicated `statusUtils.js` file.
+
 ## 🐛 Root Cause
 
 The error was caused by multiple issues in the filter handling system:
@@ -114,17 +116,25 @@ Test the following scenarios:
 
 ## 📝 Files Modified
 
-1. `src/utils/reportUtils.js`
-   - Added explicit returns to `getStatusOptions()`
-   - Added explicit returns to `getPresetOptions()`
+### Final Solution (Working):
 
-2. `src/components/ReportFilters.jsx`
+1. **`src/utils/statusUtils.js`** (NEW FILE)
+   - Created dedicated status utility file
+   - Mirrors exact pattern from `categoryUtils.js` (which works flawlessly)
+   - Uses arrow function with implicit return: `() => [...]`
+   - Includes: `getInvoiceStatuses()`, `getStatusLabel()`, `getStatusColorClasses()`, `getStatusIcon()`
+
+2. **`src/components/ReportFilters.jsx`**
+   - Imports `getInvoiceStatuses` from `statusUtils` (same as `getInvoiceCategories`)
+   - Uses same pattern for both status and category filters
    - Added `safeFilters` object with complete defaults
    - Added fallback arrays for all option getters
    - Replaced all `filters` references with `safeFilters`
-   - Updated all handler functions
-   - Updated all input bindings
-   - Updated Active Filters Summary
+
+3. **`src/utils/reportUtils.js`**
+   - Re-exports status functions from `statusUtils` for backward compatibility
+   - Eliminates duplicate code
+   - Maintains existing API
 
 ## 🚀 Deployment
 
@@ -135,11 +145,13 @@ Changes have been:
 
 ## 💡 Lessons Learned
 
-1. **Always use explicit returns** for functions that return arrays/objects
-2. **Never trust props** - always provide safe defaults
-3. **Defensive programming** prevents runtime errors
-4. **Consistent patterns** make code more maintainable
-5. **Test edge cases** like undefined props and null values
+1. **Mirror working patterns** - When one filter works, replicate its exact structure
+2. **Dedicated utility files** - Separate concerns into focused modules
+3. **Arrow functions with implicit returns** work reliably: `() => [...]`
+4. **Never trust props** - always provide safe defaults
+5. **Defensive programming** prevents runtime errors
+6. **Consistent patterns** make code more maintainable
+7. **Test edge cases** like undefined props and null values
 
 ## 🔮 Future Enhancements
 
@@ -151,6 +163,30 @@ Consider these additional improvements:
 - [ ] Consider using a form library like React Hook Form
 - [ ] Add loading states for filter operations
 - [ ] Add debouncing for filter changes
+
+---
+
+## 🎯 Key Insight
+
+The category filter worked perfectly because it used a dedicated utility file (`categoryUtils.js`) with arrow functions and implicit returns. By creating `statusUtils.js` following the exact same pattern, the status filter now works identically.
+
+**Pattern that works:**
+```javascript
+// statusUtils.js (mirrors categoryUtils.js)
+export const getInvoiceStatuses = () => [
+  { value: 'all', label: 'All Statuses' },
+  // ...
+]
+```
+
+**Usage in component:**
+```javascript
+import { getInvoiceStatuses } from '../utils/statusUtils'
+import { getInvoiceCategories } from '../utils/categoryUtils'
+
+const statusOptions = getInvoiceStatuses() || []
+const categoryOptions = getInvoiceCategories() || []
+```
 
 ---
 

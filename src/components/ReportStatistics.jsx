@@ -130,7 +130,7 @@ const ReportStatistics = ({ invoices, loading = false }) => {
       <div className="card">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          {Object.entries(statistics.statusDistribution).map(([status, count]) => (
+          {statistics.statusDistribution && typeof statistics.statusDistribution === 'object' && Object.entries(statistics.statusDistribution).map(([status, count]) => (
             <div key={status} className="text-center">
               <div className={`inline-flex items-center px-3 py-2 rounded-full text-sm font-medium border ${getStatusColorClasses(status)}`}>
                 <span className="mr-2">{getStatusIcon(status)}</span>
