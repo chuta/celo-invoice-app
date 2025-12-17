@@ -207,27 +207,31 @@ export const getUniqueUsers = (invoices) => {
  * Get available status options
  * @returns {Array} Array of status options
  */
-export const getStatusOptions = () => [
-  { value: 'all', label: 'All Statuses' },
-  { value: 'draft', label: 'Draft' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'paid', label: 'Paid' },
-  { value: 'cancelled', label: 'Cancelled' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'voided', label: 'Voided' }
-]
+export const getStatusOptions = () => {
+  return [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'paid', label: 'Paid' },
+    { value: 'cancelled', label: 'Cancelled' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'voided', label: 'Voided' }
+  ]
+}
 
 /**
  * Get preset date range options
  * @returns {Array} Array of preset options
  */
-export const getPresetOptions = () => [
-  { value: '7days', label: 'Last 7 Days' },
-  { value: '30days', label: 'Last 30 Days' },
-  { value: 'quarter', label: 'Last Quarter' },
-  { value: 'year', label: 'Last Year' }
-]
+export const getPresetOptions = () => {
+  return [
+    { value: '7days', label: 'Last 7 Days' },
+    { value: '30days', label: 'Last 30 Days' },
+    { value: 'quarter', label: 'Last Quarter' },
+    { value: 'year', label: 'Last Year' }
+  ]
+}
 
 /**
  * Calculate comprehensive statistics from invoice data

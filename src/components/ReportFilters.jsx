@@ -16,6 +16,16 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
   const [clients, setClients] = useState([])
   const [users, setUsers] = useState([])
 
+  // Ensure filters object has all required properties with safe defaults
+  const safeFilters = {
+    dateRange: filters?.dateRange || { start: null, end: null },
+    status: filters?.status || 'all',
+    category: filters?.category || 'all',
+    clientId: filters?.clientId || 'all',
+    userId: filters?.userId || 'all',
+    amountRange: filters?.amountRange || { min: '', max: '' }
+  }
+
   // Extract unique clients and users from invoices
   useEffect(() => {
     if (invoices && invoices.length > 0) {
@@ -26,16 +36,16 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
 
   // Validate filters when they change
   useEffect(() => {
-    const validation = validateFilters(filters)
+    const validation = validateFilters(safeFilters)
     setValidationErrors(validation.errors)
-  }, [filters])
+  }, [safeFilters.dateRange, safeFilters.status, safeFilters.category, safeFilters.clientId, safeFilters.userId, safeFilters.amountRange])
 
   const handleDateRangeChange = (field, value) => {
     const date = parseDateFromInput(value)
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       dateRange: {
-        ...filters.dateRange,
+        ...safeFilters.dateRange,
         [field]: date
       }
     })
@@ -44,37 +54,37 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
   const handlePresetClick = (preset) => {
     const dateRange = getPresetDateRange(preset)
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       dateRange
     })
   }
 
   const handleStatusChange = (status) => {
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       status
     })
   }
 
   const handleClientChange = (clientId) => {
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       clientId
     })
   }
 
   const handleUserChange = (userId) => {
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       userId
     })
   }
 
   const handleAmountRangeChange = (field, value) => {
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       amountRange: {
-        ...filters.amountRange,
+        ...safeFilters.amountRange,
         [field]: value
       }
     })
@@ -82,7 +92,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
 
   const handleCategoryChange = (category) => {
     onFiltersChange({
-      ...filters,
+      ...safeFilters,
       category
     })
   }
@@ -98,9 +108,10 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
     })
   }
 
-  const statusOptions = getStatusOptions()
-  const presetOptions = getPresetOptions()
-  const categoryOptions = getInvoiceCategories()
+  // Safely get options with fallbacks
+  const statusOptions = getStatusOptions() || []
+  const presetOptions = getPresetOptions() || []
+  const categoryOptions = getInvoiceCategories() || []
 
   return (
     <div className={`card ${className}`}>
@@ -140,7 +151,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               <label className="block text-xs text-gray-600 mb-1">Start Date</label>
               <input
                 type="date"
-                value={formatDateForInput(filters.dateRange.start)}
+                value={formatDateForInput(safeFilters.dateRange.start)}
                 onChange={(e) => handleDateRangeChange('start', e.target.value)}
                 className="input-field text-sm"
               />
@@ -149,7 +160,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               <label className="block text-xs text-gray-600 mb-1">End Date</label>
               <input
                 type="date"
-                value={formatDateForInput(filters.dateRange.end)}
+                value={formatDateForInput(safeFilters.dateRange.end)}
                 onChange={(e) => handleDateRangeChange('end', e.target.value)}
                 className="input-field text-sm"
               />
@@ -169,7 +180,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               Status
             </label>
             <select
-              value={filters.status}
+              value={safeFilters.status}
               onChange={(e) => handleStatusChange(e.target.value)}
               className="input-field text-sm"
             >
@@ -187,7 +198,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               Category
             </label>
             <select
-              value={filters.category || 'all'}
+              value={safeFilters.category}
               onChange={(e) => handleCategoryChange(e.target.value)}
               className="input-field text-sm"
             >
@@ -206,7 +217,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               Client
             </label>
             <select
-              value={filters.clientId}
+              value={safeFilters.clientId}
               onChange={(e) => handleClientChange(e.target.value)}
               className="input-field text-sm"
             >
@@ -225,7 +236,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
               User
             </label>
             <select
-              value={filters.userId}
+              value={safeFilters.userId}
               onChange={(e) => handleUserChange(e.target.value)}
               className="input-field text-sm"
             >
@@ -252,7 +263,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                value={filters.amountRange.min}
+                value={safeFilters.amountRange.min}
                 onChange={(e) => handleAmountRangeChange('min', e.target.value)}
                 className="input-field text-sm"
               />
@@ -264,7 +275,7 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
                 min="0"
                 step="0.01"
                 placeholder="No limit"
-                value={filters.amountRange.max}
+                value={safeFilters.amountRange.max}
                 onChange={(e) => handleAmountRangeChange('max', e.target.value)}
                 className="input-field text-sm"
               />
@@ -278,50 +289,50 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
       </div>
 
       {/* Active Filters Summary */}
-      {(filters.dateRange.start || filters.dateRange.end || filters.status !== 'all' || 
-        filters.category !== 'all' || filters.clientId !== 'all' || filters.userId !== 'all' || 
-        filters.amountRange.min || filters.amountRange.max) && (
+      {(safeFilters.dateRange.start || safeFilters.dateRange.end || safeFilters.status !== 'all' || 
+        safeFilters.category !== 'all' || safeFilters.clientId !== 'all' || safeFilters.userId !== 'all' || 
+        safeFilters.amountRange.min || safeFilters.amountRange.max) && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <p className="text-xs text-gray-600 mb-2">Active Filters:</p>
           <div className="flex flex-wrap gap-1">
-            {filters.dateRange.start && (
+            {safeFilters.dateRange.start && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                From: {filters.dateRange.start.toLocaleDateString()}
+                From: {safeFilters.dateRange.start.toLocaleDateString()}
               </span>
             )}
-            {filters.dateRange.end && (
+            {safeFilters.dateRange.end && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
-                To: {filters.dateRange.end.toLocaleDateString()}
+                To: {safeFilters.dateRange.end.toLocaleDateString()}
               </span>
             )}
-            {filters.status !== 'all' && (
+            {safeFilters.status !== 'all' && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                Status: {filters.status}
+                Status: {safeFilters.status}
               </span>
             )}
-            {filters.category && filters.category !== 'all' && (
+            {safeFilters.category && safeFilters.category !== 'all' && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-indigo-100 text-indigo-800">
-                Category: {categoryOptions.find(c => c.value === filters.category)?.label || 'Unknown'}
+                Category: {categoryOptions.find(c => c.value === safeFilters.category)?.label || 'Unknown'}
               </span>
             )}
-            {filters.clientId !== 'all' && (
+            {safeFilters.clientId !== 'all' && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800">
-                Client: {clients.find(c => c.id === filters.clientId)?.name || 'Unknown'}
+                Client: {clients.find(c => c.id === safeFilters.clientId)?.name || 'Unknown'}
               </span>
             )}
-            {filters.userId !== 'all' && (
+            {safeFilters.userId !== 'all' && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800">
-                User: {users.find(u => u.id === filters.userId)?.name || 'Unknown'}
+                User: {users.find(u => u.id === safeFilters.userId)?.name || 'Unknown'}
               </span>
             )}
-            {filters.amountRange.min && (
+            {safeFilters.amountRange.min && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                Min: {filters.amountRange.min} cUSD
+                Min: {safeFilters.amountRange.min} cUSD
               </span>
             )}
-            {filters.amountRange.max && (
+            {safeFilters.amountRange.max && (
               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
-                Max: {filters.amountRange.max} cUSD
+                Max: {safeFilters.amountRange.max} cUSD
               </span>
             )}
           </div>
