@@ -2,6 +2,8 @@
  * Utility functions for report filtering and date calculations
  */
 
+import { getInvoiceStatuses } from './statusUtils'
+
 /**
  * Calculate date range for preset options
  * @param {string} preset - The preset option ('7days', '30days', 'quarter', 'year')
@@ -205,19 +207,12 @@ export const getUniqueUsers = (invoices) => {
 
 /**
  * Get available status options
+ * @deprecated Use getInvoiceStatuses from statusUtils.js instead
  * @returns {Array} Array of status options
  */
 export const getStatusOptions = () => {
-  return [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'draft', label: 'Draft' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'approved', label: 'Approved' },
-    { value: 'paid', label: 'Paid' },
-    { value: 'cancelled', label: 'Cancelled' },
-    { value: 'rejected', label: 'Rejected' },
-    { value: 'voided', label: 'Voided' }
-  ]
+  // Re-export from statusUtils for backward compatibility
+  return getInvoiceStatuses()
 }
 
 /**
@@ -351,41 +346,8 @@ export const formatCurrency = (amount) => {
   return `${amount.toFixed(2)} cUSD`
 }
 
-/**
- * Get status color classes for badges
- * @param {string} status - Invoice status
- * @returns {string} CSS classes for status styling
- */
-export const getStatusColorClasses = (status) => {
-  const colors = {
-    draft: 'bg-gray-100 text-gray-800 border-gray-200',
-    pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    approved: 'bg-green-100 text-green-800 border-green-200',
-    paid: 'bg-blue-100 text-blue-800 border-blue-200',
-    cancelled: 'bg-red-100 text-red-800 border-red-200',
-    voided: 'bg-red-100 text-red-800 border-red-200',
-    rejected: 'bg-red-100 text-red-800 border-red-200',
-  }
-  return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200'
-}
-
-/**
- * Get status icon for visual indicators
- * @param {string} status - Invoice status
- * @returns {string} Emoji icon for status
- */
-export const getStatusIcon = (status) => {
-  const icons = {
-    draft: '📝',
-    pending: '⏳',
-    approved: '✅',
-    paid: '💵',
-    cancelled: '❌',
-    voided: '⊘',
-    rejected: '❌',
-  }
-  return icons[status] || '📄'
-}
+// Re-export status utility functions from statusUtils for backward compatibility
+export { getStatusColorClasses, getStatusIcon } from './statusUtils'
 
 /**
  * Generate CSV content from invoice data

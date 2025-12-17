@@ -6,10 +6,10 @@ import {
   validateFilters,
   getUniqueClients,
   getUniqueUsers,
-  getStatusOptions,
   getPresetOptions
 } from '../utils/reportUtils'
 import { getInvoiceCategories } from '../utils/categoryUtils'
+import { getInvoiceStatuses } from '../utils/statusUtils'
 
 export default function ReportFilters({ filters, onFiltersChange, invoices, className = '' }) {
   const [validationErrors, setValidationErrors] = useState({})
@@ -108,8 +108,8 @@ export default function ReportFilters({ filters, onFiltersChange, invoices, clas
     })
   }
 
-  // Safely get options with fallbacks
-  const statusOptions = getStatusOptions() || []
+  // Safely get options with fallbacks - using same pattern as category filter
+  const statusOptions = getInvoiceStatuses() || []
   const presetOptions = getPresetOptions() || []
   const categoryOptions = getInvoiceCategories() || []
 
