@@ -16,6 +16,7 @@ export default function InvoiceNew() {
 
   const [formData, setFormData] = useState({
     client_id: '',
+    invoice_category: '',
     invoice_type: 'one_time',
     issue_date: new Date().toISOString().split('T')[0],
     due_date: '',
@@ -24,6 +25,15 @@ export default function InvoiceNew() {
     is_recurring: false,
     recurrence_frequency: 'monthly',
   })
+
+  const invoiceCategories = [
+    { value: 'judges_mentors', label: 'Judges & Mentors' },
+    { value: 'hackerdao_winners', label: 'HackerDAO Winners' },
+    { value: 'hackathon_winners', label: 'Hackathon Winners' },
+    { value: 'incubation_winners', label: 'Incubation Winners' },
+    { value: 'dao_contributor_allowance', label: 'DAO Contributor Allowance' },
+    { value: 'monthly_events', label: 'Monthly Events' },
+  ]
 
   const [lineItems, setLineItems] = useState([
     { description: '', quantity: 1, unit_price: 0 },
@@ -103,6 +113,9 @@ export default function InvoiceNew() {
       if (!formData.client_id) {
         throw new Error('Please select a client')
       }
+      if (!formData.invoice_category) {
+        throw new Error('Please select an invoice category')
+      }
       if (!formData.due_date) {
         throw new Error('Please set a due date')
       }
@@ -118,6 +131,7 @@ export default function InvoiceNew() {
       const invoiceData = {
         user_id: user.id,
         client_id: formData.client_id,
+        invoice_category: formData.invoice_category,
         invoice_type: formData.invoice_type,
         status: status,
         amount: total,
@@ -185,31 +199,55 @@ export default function InvoiceNew() {
             {/* Client Selection */}
             <div className="card">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Client Information</h2>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Select Client *
-                </label>
-                <select
-                  value={formData.client_id}
-                  onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                  className="input-field"
-                  required
-                >
-                  <option value="">Choose a client...</option>
-                  {clients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.name} ({client.email})
-                    </option>
-                  ))}
-                </select>
-                {clients.length === 0 && (
-                  <p className="text-sm text-gray-500 mt-2">
-                    No clients found.{' '}
-                    <a href="/clients" className="text-primary-600 hover:text-primary-700">
-                      Add a client first
-                    </a>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Select Client *
+                  </label>
+                  <select
+                    value={formData.client_id}
+                    onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                    className="input-field"
+                    required
+                  >
+                    <option value="">Choose a client...</option>
+                    {clients.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.name} ({client.email})
+                      </option>
+                    ))}
+                  </select>
+                  {clients.length === 0 && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      No clients found.{' '}
+                      <a href="/clients" className="text-primary-600 hover:text-primary-700">
+                        Add a client first
+                      </a>
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Invoice Category *
+                  </label>
+                  <select
+                    value={formData.invoice_category}
+                    onChange={(e) => setFormData({ ...formData, invoice_category: e.target.value })}
+                    className="input-field"
+                    required
+                  >
+                    <option value="">Choose a category...</option>
+                    {invoiceCategories.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Select the category that best describes this invoice
                   </p>
-                )}
+                </div>
               </div>
             </div>
 
