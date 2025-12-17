@@ -107,6 +107,11 @@ export const validateFilters = (filters) => {
  * @returns {Array} Filtered invoice array
  */
 export const applyFilters = (invoices, filters) => {
+  // Add null check to prevent "filter is not a function" error
+  if (!invoices || !Array.isArray(invoices)) {
+    return []
+  }
+  
   return invoices.filter(invoice => {
     // Date range filter
     if (filters.dateRange.start || filters.dateRange.end) {

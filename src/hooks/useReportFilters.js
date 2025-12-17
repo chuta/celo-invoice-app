@@ -20,8 +20,10 @@ export function useReportFilters(invoices = []) {
 
   // Apply filters to invoice data
   const filteredInvoices = useMemo(() => {
-    if (!validation.isValid) return invoices
-    return applyFilters(invoices, filters)
+    // Ensure invoices is always an array
+    const safeInvoices = invoices || []
+    if (!validation.isValid) return safeInvoices
+    return applyFilters(safeInvoices, filters)
   }, [invoices, filters, validation.isValid])
 
   // Update filters
