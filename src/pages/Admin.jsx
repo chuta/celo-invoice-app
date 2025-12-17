@@ -357,7 +357,7 @@ export default function Admin() {
   const filteredInvoices =
     statusFilter === 'all'
       ? allInvoices
-      : allInvoices.filter((inv) => inv.status === statusFilter)
+      : (allInvoices || []).filter((inv) => inv.status === statusFilter)
 
   return (
     <Layout>
