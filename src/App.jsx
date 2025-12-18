@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import InactivityMonitor from './components/InactivityMonitor'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -14,112 +15,115 @@ import UserManagement from './pages/UserManagement'
 import PaymentLink from './pages/PaymentLink'
 import PaymentLinkSettings from './pages/PaymentLinkSettings'
 import PaymentRequests from './pages/PaymentRequests'
+import { INACTIVITY_CONFIG } from './config/inactivity'
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/pay/:username" element={<PaymentLink />} />
-          
-          {/* Protected routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/settings/payment-link"
-            element={
-              <ProtectedRoute>
-                <PaymentLinkSettings />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/payment-requests"
-            element={
-              <ProtectedRoute>
-                <PaymentRequests />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/clients"
-            element={
-              <ProtectedRoute>
-                <Clients />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/invoices"
-            element={
-              <ProtectedRoute>
-                <Invoices />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/invoices/new"
-            element={
-              <ProtectedRoute>
-                <InvoiceNew />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/invoices/:id"
-            element={
-              <ProtectedRoute>
-                <InvoiceDetail />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute adminOnly>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/users"
-            element={
-              <ProtectedRoute>
-                <UserManagement />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+        <InactivityMonitor config={INACTIVITY_CONFIG}>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/pay/:username" element={<PaymentLink />} />
+            
+            {/* Protected routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/settings/payment-link"
+              element={
+                <ProtectedRoute>
+                  <PaymentLinkSettings />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/payment-requests"
+              element={
+                <ProtectedRoute>
+                  <PaymentRequests />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/clients"
+              element={
+                <ProtectedRoute>
+                  <Clients />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute>
+                  <Invoices />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/invoices/new"
+              element={
+                <ProtectedRoute>
+                  <InvoiceNew />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/invoices/:id"
+              element={
+                <ProtectedRoute>
+                  <InvoiceDetail />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </InactivityMonitor>
       </AuthProvider>
     </Router>
   )

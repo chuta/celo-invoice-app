@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Login() {
@@ -7,8 +7,26 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [inactivityMessage, setInactivityMessage] = useState('')
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  // Check for inactivity flag in URL params and display message
+  // Requirements: 3.4
+  useEffect(() => {
+    const reason = searchParams.get('reason')
+    if (reason === 'inactivity') {
+      setInactivityMessage('Your session has ended due to inactivity. Please sign in again to continue.')
+      
+      // Clear the message after it's been displayed (remove from URL)
+      const timer = setTimeout(() => {
+        setInactivityMessage('')
+      }, 10000) // Clear after 10 seconds
+      
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,7 +35,16 @@ export default function Login() {
 
     try {
       await signIn(email, password)
-      navigate('/dashboard')
+      
+      // Check for stored redirect path and navigate there
+      // Requirements: 3.5
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin')
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectAfterLogin')
+        navigate(redirectPath)
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err) {
       setError(err.message || 'Failed to sign in')
     } finally {
@@ -106,6 +133,13 @@ export default function Login() {
               Sign in to your account to continue
             </p>
           </div>
+
+          {inactivityMessage && (
+            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg flex items-start gap-3">
+              <span className="text-xl">⏱️</span>
+              <span className="flex-1">{inactivityMessage}</span>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-3">
