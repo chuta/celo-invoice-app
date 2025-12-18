@@ -19,11 +19,12 @@
  * @property {string[]} ACTIVITY_EVENTS - DOM events that count as user activity
  */
 export const INACTIVITY_CONFIG = {
-  // Warning threshold: Show warning dialog after 50 minutes of inactivity
-  WARNING_TIME_MINUTES: 50,
+  // ⚠️ TESTING CONFIGURATION - REDUCED TIMEOUTS FOR QUICK TESTING
+  // Warning threshold: Show warning dialog after 1 minute of inactivity (TESTING: normally 50)
+  WARNING_TIME_MINUTES: 1,
   
-  // Sign-out threshold: Automatically sign out after 60 minutes of inactivity
-  SIGN_OUT_TIME_MINUTES: 60,
+  // Sign-out threshold: Automatically sign out after 2 minutes of inactivity (TESTING: normally 60)
+  SIGN_OUT_TIME_MINUTES: 2,
   
   // Enable/disable inactivity monitoring
   ENABLED: true,
