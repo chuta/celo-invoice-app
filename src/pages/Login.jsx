@@ -182,6 +182,14 @@ export default function Login() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#35D07F] focus:border-transparent transition-all"
                   placeholder="••••••••"
                 />
+                <div className="mt-2 text-right">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-sm text-[#35D07F] hover:text-[#2AB86F] transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
               </div>
             </div>
 

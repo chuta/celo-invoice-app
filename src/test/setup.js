@@ -1,5 +1,12 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import { afterEach } from 'vitest'
+
+// Cleanup after each test
+afterEach(() => {
+  cleanup()
+})
 
 // Setup DOM environment
 Object.defineProperty(window, 'matchMedia', {

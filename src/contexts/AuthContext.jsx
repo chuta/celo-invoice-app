@@ -104,6 +104,24 @@ export const AuthProvider = ({ children }) => {
     if (error) throw error
   }
 
+  // Password reset - sends email with reset link
+  const resetPasswordForEmail = async (email) => {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    if (error) throw error
+    return data
+  }
+
+  // Update password - called from reset password page
+  const updatePassword = async (newPassword) => {
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+    if (error) throw error
+    return data
+  }
+
   const updateProfile = async (updates) => {
     if (!user) throw new Error('No user logged in')
     
@@ -131,6 +149,8 @@ export const AuthProvider = ({ children }) => {
     signUp,
     signIn,
     signOut,
+    resetPasswordForEmail,
+    updatePassword,
     updateProfile,
     refreshProfile,
     isAdmin: profile?.role === 'admin' || profile?.role === 'super_admin',

@@ -4,6 +4,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import InactivityMonitor from './components/InactivityMonitor'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import Clients from './pages/Clients'
@@ -26,6 +28,8 @@ function App() {
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/pay/:username" element={<PaymentLink />} />
             
             {/* Protected routes */}
