@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { sendEmailNotification } from '../lib/email'
 import { useAuth } from '../contexts/AuthContext'
+import { getInvoiceCategories } from '../utils/categoryUtils'
 import Layout from '../components/Layout'
 
 export default function InvoiceNew() {
@@ -26,14 +27,7 @@ export default function InvoiceNew() {
     recurrence_frequency: 'monthly',
   })
 
-  const invoiceCategories = [
-    { value: 'judges_mentors', label: 'Judges & Mentors' },
-    { value: 'hackerdao_winners', label: 'HackerDAO Winners' },
-    { value: 'hackathon_winners', label: 'Hackathon Winners' },
-    { value: 'incubation_winners', label: 'Incubation Winners' },
-    { value: 'dao_contributor_allowance', label: 'DAO Contributor Allowance' },
-    { value: 'monthly_events', label: 'Monthly Events' },
-  ]
+  const invoiceCategories = getInvoiceCategories()
 
   const [lineItems, setLineItems] = useState([
     { description: '', quantity: 1, unit_price: 0 },
