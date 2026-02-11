@@ -13,6 +13,7 @@ export const getInvoiceCategories = () => [
   { value: 'incubation_winners', label: 'Incubation Winners' },
   { value: 'dao_contributor_allowance', label: 'DAO Contributor Allowance' },
   { value: 'monthly_events', label: 'Monthly Events' },
+  { value: 'miscellaneous', label: 'Miscellaneous' },
 ]
 
 /**
@@ -39,6 +40,7 @@ export const getCategoryColorClasses = (category) => {
     incubation_winners: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     dao_contributor_allowance: 'bg-pink-100 text-pink-800 border-pink-200',
     monthly_events: 'bg-indigo-100 text-indigo-800 border-indigo-200',
+    miscellaneous: 'bg-gray-100 text-gray-800 border-gray-200',
   }
   return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200'
 }
@@ -56,6 +58,7 @@ export const getCategoryIcon = (category) => {
     incubation_winners: '🚀',
     dao_contributor_allowance: '💰',
     monthly_events: '📅',
+    miscellaneous: '📎',
   }
   return icons[category] || '📄'
 }
